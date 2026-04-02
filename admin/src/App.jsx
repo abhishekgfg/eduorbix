@@ -18,6 +18,13 @@ import AdminDestinations from "./studyabroad/AdminDestinations";
 import AdminStudyAbroadDashboard from "./studyabroad/AdminStudyAbroadDashboard";
 import EditStudyAbroad from "./studyabroad/EditStudyAbroad";
 import AdminUniversity from "./university/AdminUniversity";
+import BlogAdmin from "./blog/BlogAdmin";
+import AdminDashboard from "./blog/AdminDashboard";
+import AdminEditBlog from "./blog/AdminEditBlog";
+import ContactAdminDashboard from "./contact/ContactAdminDashboard";
+import ApplicationAdminDashboard from "./application/ApplicationAdminDashboard";
+import AdminAgentDashboard from "./pages/AdminAgentDashboard";
+import AdminPartnerDashboard from "./pages/AdminPartnerDashboard";
 
 
 
@@ -43,8 +50,15 @@ function App() {
     <Route path="/admin/study-india-programs/edit/:id" element={<Layout><EditStudyIndiaProgram /></Layout>} />
     <Route path="/admin-destinations" element={<Layout><AdminDestinations /></Layout>} />
     <Route path="/admin-study-abroad" element={<Layout><AdminStudyAbroadDashboard /></Layout>} />
-        <Route path="/admin/study-abroad/edit/:id" element={<Layout><EditStudyAbroad /></Layout>} />
-<Route path="/admin-universities" element={<Layout><AdminUniversity /></Layout>} />
+    <Route path="/admin/study-abroad/edit/:id" element={<Layout><EditStudyAbroad /></Layout>} />
+    <Route path="/admin-universities" element={<Layout><AdminUniversity /></Layout>} />
+    <Route path="/admin-blogs" element={<Layout><BlogAdmin /></Layout>} />
+    <Route path="/admin-dashboard" element={<Layout><AdminDashboard /></Layout>} />
+    <Route path="/admin/edit-blog/:id" element={<Layout><AdminEditBlog /></Layout>} />
+    <Route path="/admin-contact" element={<Layout><ContactAdminDashboard /></Layout>} />
+    <Route path="/admin-applications" element={<Layout><ApplicationAdminDashboard /></Layout>} />
+    <Route  path="/agent-dashboard" element={<Layout><AdminAgentDashboard /></Layout>} />
+    <Route path="/partner-dashboard" element={<Layout><AdminPartnerDashboard /></Layout>} />
 
 
 

@@ -194,7 +194,7 @@ export default function AboutUs() {
         {/* CTA Button */}
         <div className="text-center mt-8">
           <button 
-            onClick={() => navigate("/contact-us")}
+            onClick={() => navigate("/contact")}
             className="px-10 py-3 bg-[#C9A227] text-[#0A1F44] font-semibold rounded-md hover:bg-[#0A1F44] hover:text-white transition-all duration-300 shadow-md border-2 border-[#C9A227]"
           >
             Connect With Our Team

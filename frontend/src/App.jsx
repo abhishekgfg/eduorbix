@@ -6,7 +6,7 @@
   import Home from './pages/Homepage';
   import Studyindia from './pages/studyindia';
   import Studyabroad from './pages/Studyabroad';
-  import StudyUK from './studyabroad/StudyUK';
+  import StudyUK from './studyabroad/StudyAbroadDetails.jsx';
   import AboutUs from './pages/AboutUs';
   import Course from './pages/Course';
   import University from './pages/University';
@@ -14,11 +14,12 @@
   import Services from './pages/Services';
   import Scholar from './pages/Scholar';
   import BlogPage from './blog/BlogPage';
-  import BlogDetailsPage from './blog/BlogDetailsPage.jsx';
   import ContactPage from './pages/ContactPage.jsx';
   import PartnerSection from './pages/PartnerSection.jsx';
   import Agent from './pages/Agent.jsx';
 import ProgramDetails from './studyindia/ProgramDetails.jsx';
+import StudyAbroadDetails from './studyabroad/StudyAbroadDetails.jsx';
+import BlogDetailsPage from './blog/BlogDetailsPage.jsx';
 
   function App() {
     return (
@@ -37,11 +38,13 @@ import ProgramDetails from './studyindia/ProgramDetails.jsx';
             <Route path="/scholarships" element={<Scholar />} />
             <Route path='/contact' element={<ContactPage />} />
             <Route path="/blogs" element={<BlogPage />} />
-            <Route path="/blog/:id" element={<BlogDetailsPage />} />
+            <Route path="/blog/:slug" element={<BlogDetailsPage />} />
             <Route path='/partner' element={<PartnerSection />} />
             <Route path='/for-agents' element={<Agent />} />
-            <Route path="/program/engineering" element={<ProgramDetails />} />
-          </Routes>
+       <Route path="/program/:id" element={<ProgramDetails />} />
+       <Route path="/study/:country" element={<StudyAbroadDetails />} />
+       {/* <Route path="" element={<BlogDetailsPage />} /> */}
+                 </Routes>
         </Layout>
       </BrowserRouter>
     );

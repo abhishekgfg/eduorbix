@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -7,137 +7,109 @@ import {
   BookOpen,
   Eye
 } from 'lucide-react';
+import axiosInstance from '../api/axiosInstance';
 
 const BlogPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Complete Guide to Studying Abroad in 2026",
-      excerpt: "Everything you need to know about international admissions, visas, and settling in a new country.",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop",
-      category: "Study Abroad",
-      author: "Dr. Sarah Johnson",
-      date: "Mar 15, 2026",
-      readTime: "8 min read",
-      views: "2.5k"
-    },
-    {
-      id: 2,
-      title: "Top 10 Scholarships for Indian Students",
-      excerpt: "Discover fully-funded scholarships that can make your dream of studying abroad a reality.",
-      image: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?q=80&w=2070&auto=format&fit=crop",
-      category: "Scholarships",
-      author: "Priya Sharma",
-      date: "Mar 12, 2026",
-      readTime: "6 min read",
-      views: "3.8k"
-    },
-    {
-      id: 3,
-      title: "How to Choose the Right University",
-      excerpt: "A step-by-step guide to finding your perfect academic match based on programs, location, and budget.",
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2086&auto=format&fit=crop",
-      category: "University Guide",
-      author: "Michael Chen",
-      date: "Mar 10, 2026",
-      readTime: "5 min read",
-      views: "1.2k"
-    },
-    {
-      id: 4,
-      title: "Student Visa Requirements 2026",
-      excerpt: "Latest updates on visa processes for USA, UK, Canada, Australia, and Europe.",
-      image: "https://images.unsplash.com/photo-1554224154-26032ffc0d07?q=80&w=2026&auto=format&fit=crop",
-      category: "Visa Guide",
-      author: "James Wilson",
-      date: "Mar 8, 2026",
-      readTime: "7 min read",
-      views: "4.1k"
-    },
-    {
-      id: 5,
-      title: "Student Accommodation: Tips & Tricks",
-      excerpt: "From dormitories to private rentals – find the best housing options for international students.",
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069&auto=format&fit=crop",
-      category: "Student Life",
-      author: "Emma Davis",
-      date: "Mar 5, 2026",
-      readTime: "4 min read",
-      views: "987"
-    },
-    {
-      id: 6,
-      title: "Part-Time Jobs While Studying",
-      excerpt: "Complete guide to work permits, job hunting, and balancing work with academics.",
-      image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop",
-      category: "Career Advice",
-      author: "Robert Taylor",
-      date: "Mar 3, 2026",
-      readTime: "6 min read",
-      views: "2.3k"
-    },
-    {
-      id: 7,
-      title: "Mental Health for International Students",
-      excerpt: "Coping strategies and resources to maintain mental well-being while studying abroad.",
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop",
-      category: "Wellness",
-      author: "Dr. Lisa Wang",
-      date: "Feb 28, 2026",
-      readTime: "5 min read",
-      views: "1.8k"
-    },
-    {
-      id: 8,
-      title: "Top 5 Countries for STEM Education",
-      excerpt: "Comparison of STEM programs, research opportunities, and career prospects worldwide.",
-      image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?q=80&w=2070&auto=format&fit=crop",
-      category: "STEM",
-      author: "Prof. David Kim",
-      date: "Feb 25, 2026",
-      readTime: "7 min read",
-      views: "3.2k"
-    },
-    {
-      id: 9,
-      title: "Cultural Adaptation Guide",
-      excerpt: "Tips for overcoming culture shock and making the most of your international experience.",
-      image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=2069&auto=format&fit=crop",
-      category: "Student Life",
-      author: "Maria Garcia",
-      date: "Feb 22, 2026",
-      readTime: "5 min read",
-      views: "1.5k"
+  // Fetch blogs from API
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get('/blogs');
+      setBlogPosts(response.data.data);
+      
+      // Calculate categories with counts from fetched data
+      const categoryMap = new Map();
+      categoryMap.set('all', { name: 'All Posts', count: response.data.data.length });
+      
+      response.data.data.forEach(blog => {
+        if (blog.category) {
+          const categoryId = blog.category.toLowerCase().replace(/\s+/g, '-');
+          if (categoryMap.has(categoryId)) {
+            categoryMap.get(categoryId).count++;
+          } else {
+            categoryMap.set(categoryId, {
+              id: categoryId,
+              name: blog.category,
+              count: 1
+            });
+          }
+        }
+      });
+      
+      const categoriesArray = [
+        { id: 'all', name: 'All Posts', count: response.data.data.length },
+        ...Array.from(categoryMap.values()).filter(c => c.id !== 'all')
+      ];
+      
+      setCategories(categoriesArray);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching blogs:', err);
+      setError('Failed to load blog posts');
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  const categories = [
-    { id: 'all', name: 'All Posts', count: 9 },
-    { id: 'study-abroad', name: 'Study Abroad', count: 1 },
-    { id: 'scholarships', name: 'Scholarships', count: 1 },
-    { id: 'university-guide', name: 'University Guide', count: 1 },
-    { id: 'visa-guide', name: 'Visa Guide', count: 1 },
-    { id: 'student-life', name: 'Student Life', count: 2 },
-    { id: 'career-advice', name: 'Career Advice', count: 1 },
-    { id: 'wellness', name: 'Wellness', count: 1 },
-    { id: 'stem', name: 'STEM', count: 1 }
-  ];
-
-  const handleReadMore = (post) => {
-    navigate(`/blog/${post.id}`, { state: { post } });
   };
 
-  const filteredPosts = blogPosts.filter(post => 
-    (selectedCategory === 'all' || post.category.toLowerCase().includes(selectedCategory.replace('-', ' '))) &&
-    (searchTerm === '' || post.title.toLowerCase().includes(searchTerm.toLowerCase()) || post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const handleReadMore = (blog) => {
+    navigate(`/blog/${blog.slug}`, { state: { blog } });
+  };
+
+  const filteredPosts = blogPosts.filter(blog => {
+    const matchesCategory = selectedCategory === 'all' || 
+      (blog.category && blog.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory);
+    const matchesSearch = searchTerm === '' || 
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (blog.shortDescription && blog.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-900 border-r-transparent"></div>
+          <p className="mt-4 text-gray-600">Loading blog posts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={fetchBlogs}
+            className="bg-blue-900 text-white px-6 py-2 rounded-lg hover:bg-blue-800"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#0b2a4a] to-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="relative bg-[#0b2a4a] text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
@@ -173,61 +145,80 @@ const BlogPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Categories */}
-        <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                selectedCategory === category.id
-                  ? 'bg-blue-900 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {category.name} ({category.count})
-            </button>
-          ))}
-        </div>
+        {categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-8 justify-center">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  selectedCategory === category.id
+                    ? 'bg-blue-900 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category.name} ({category.count})
+              </button>
+            ))}
+          </div>
+        )}
 
-        {/* Blog Posts Grid - 3x3 */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPosts.map((post) => (
-            <div
-              key={post.id}
-              onClick={() => handleReadMore(post)}
-              className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+        {/* Blog Posts Grid */}
+        {filteredPosts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No blog posts found.</p>
+            <button
+              onClick={() => {
+                setSelectedCategory('all');
+                setSearchTerm('');
+              }}
+              className="mt-4 text-blue-600 hover:text-blue-800 font-medium"
             >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                    {post.category}
-                  </span>
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                    <Clock size={12} /> {post.readTime}
-                  </span>
+              Clear filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPosts.map((blog) => (
+              <div
+                key={blog._id}
+                onClick={() => handleReadMore(blog)}
+                className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={blog.image || "https://via.placeholder.com/400x300?text=Blog+Image"}
+                    alt={blog.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <span className="text-xs font-medium text-gray-700">{post.author}</span>
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <Eye size={14} />
-                    <span className="text-xs">{post.views}</span>
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                      {blog.category || "Uncategorized"}
+                    </span>
+                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                      <Clock size={12} /> {blog.readTime || "5 min read"}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                    {blog.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {blog.shortDescription || blog.content?.substring(0, 100)}
+                  </p>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span className="text-xs font-medium text-gray-700">{blog.authorName}</span>
+                    <div className="flex items-center gap-1 text-gray-500">
+                      <Eye size={14} />
+                      <span className="text-xs">{blog.views || 0}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Newsletter */}
         <div className="mt-12 bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl p-6 text-white relative overflow-hidden">

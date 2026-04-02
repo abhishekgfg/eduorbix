@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 
 export default function WhatWeDo() {
   const services = [
@@ -36,9 +38,11 @@ export default function WhatWeDo() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-10">
-          <button className="px-6 py-3 bg-[#c5a46d] text-white rounded-lg text-sm font-medium hover:bg-[#c5a46d] transition-all duration-300">
-            Get Free Consultation →
-          </button>
+         <Link to="/application-form">
+  <button className="px-6 py-3 bg-[#c5a46d] text-white rounded-lg text-sm font-medium hover:bg-[#c5a46d] transition-all duration-300">
+    Get Free Consultation →
+  </button>
+</Link>
         </div>
       </div>
     </section>

@@ -102,7 +102,7 @@ const Dashboard = () => {
       const blogs = blogsRes.data || [];
       
       // Fetch case studies
-      const caseStudiesRes = await axiosInstance.get("/case-studies");
+      const caseStudiesRes = await axiosInstance.get("/blogs");
       const caseStudies = caseStudiesRes.data || [];
 
       // Calculate stats

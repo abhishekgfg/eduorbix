@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "../images/courseimg.png";
 
 export default function ProgramsHeroSection() {
@@ -45,13 +45,14 @@ export default function ProgramsHeroSection() {
               >
                 Explore Now
               </button>
-
+<Link to="/application-form">
               <button 
                 onClick={() => navigate("/book-counselling")}
                 className="px-6 py-2.5 border border-white text-white rounded-md hover:bg-white hover:text-[#0A1F44] transition"
               >
                 Counselling
               </button>
+              </Link>
             </div>
 
           </div>

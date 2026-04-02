@@ -1,172 +1,231 @@
-// import Blog from "../models/Blog.js";
+import Blog from '../models/Blog.js';
 
-// // CREATE
-// export const createBlog = async (req, res) => {
-//   try {
-//     const blog = new Blog(req.body);
-//     await blog.save();
-//     res.status(201).json({ success: true, blog });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
-// // GET ALL
-// export const getBlogs = async (req, res) => {
-//   try {
-//     const blogs = await Blog.find().sort({ createdAt: -1 });
-//     res.json(blogs);
-//   } catch (error) {
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
-
-// // GET BY SLUG
-// export const getBlogBySlug = async (req, res) => {
-//   try {
-//     const blog = await Blog.findOne({ slug: req.params.slug });
-//     if (!blog) return res.status(404).json({ message: "Blog not found" });
-//     res.json(blog);
-//   } catch (error) {
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
-
-
-
-// // controllers/blogController.js (add these functions)
-
-// // UPDATE
-// export const updateBlog = async (req, res) => {
-//   try {
-//     const blog = await Blog.findByIdAndUpdate(
-//       req.params.id,
-//       req.body,
-//       { new: true, runValidators: true }
-//     );
-//     if (!blog) return res.status(404).json({ message: "Blog not found" });
-//     res.json({ success: true, blog });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
-// // DELETE
-// export const deleteBlog = async (req, res) => {
-//   try {
-//     const blog = await Blog.findByIdAndDelete(req.params.id);
-//     if (!blog) return res.status(404).json({ message: "Blog not found" });
-//     res.json({ success: true, message: "Blog deleted successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
-
-
-
-
-// controllers/blogController.js
-import Blog from "../models/Blog.js";
-import mongoose from "mongoose";
-
-// CREATE
+// Create a new blog
 export const createBlog = async (req, res) => {
   try {
-    const blog = new Blog(req.body);
+    const blogData = req.body;
+    
+    // Check if slug already exists
+    const existingBlog = await Blog.findOne({ slug: blogData.slug });
+    if (existingBlog) {
+      return res.status(400).json({
+        success: false,
+        message: 'A blog with this slug already exists'
+      });
+    }
+
+    const blog = new Blog(blogData);
     await blog.save();
-    res.status(201).json({ success: true, blog });
+
+    res.status(201).json({
+      success: true,
+      message: 'Blog created successfully',
+      data: blog
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error('Error creating blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create blog',
+      error: error.message
+    });
   }
 };
 
-// GET ALL
-export const getBlogs = async (req, res) => {
+// Get all blogs
+export const getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
+    res.status(200).json({
+      success: true,
+      data: blogs
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch blogs',
+      error: error.message
+    });
   }
 };
 
-// GET BY SLUG (with ID detection)
+// Get single blog by slug
 export const getBlogBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    
-    // Check if the parameter is a valid MongoDB ObjectId
-    if (mongoose.Types.ObjectId.isValid(slug)) {
-      // If it's a valid ID, try to find by ID first
-      const blogById = await Blog.findById(slug);
-      if (blogById) {
-        return res.json(blogById);
-      }
-    }
-    
-    // If not a valid ID or no blog found by ID, try to find by slug
-    const blog = await Blog.findOne({ slug: slug });
+    const blog = await Blog.findOne({ slug });
+
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
     }
-    res.json(blog);
+
+    // Increment views
+    blog.views += 1;
+    await blog.save();
+
+    res.status(200).json({
+      success: true,
+      data: blog
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    console.error('Error fetching blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch blog',
+      error: error.message
+    });
   }
 };
 
-// UPDATE
+// Get single blog by ID
+export const getBlogById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: blog
+    });
+  } catch (error) {
+    console.error('Error fetching blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch blog',
+      error: error.message
+    });
+  }
+};
+
+// Update blog
 export const updateBlog = async (req, res) => {
   try {
     const { id } = req.params;
+    const updateData = req.body;
     
-    // Validate MongoDB ID
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid blog ID format" });
+    // Check if slug already exists for another blog
+    if (updateData.slug) {
+      const existingBlog = await Blog.findOne({ 
+        slug: updateData.slug, 
+        _id: { $ne: id } 
+      });
+      if (existingBlog) {
+        return res.status(400).json({
+          success: false,
+          message: 'A blog with this slug already exists'
+        });
+      }
     }
-    
+
     const blog = await Blog.findByIdAndUpdate(
       id,
-      req.body,
+      { ...updateData, updatedAt: Date.now() },
       { new: true, runValidators: true }
     );
-    
+
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
     }
-    
-    res.json({ success: true, blog });
+
+    res.status(200).json({
+      success: true,
+      message: 'Blog updated successfully',
+      data: blog
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error('Error updating blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update blog',
+      error: error.message
+    });
   }
 };
 
-// DELETE
+// Delete blog
 export const deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Validate MongoDB ID
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid blog ID format" });
-    }
-    
     const blog = await Blog.findByIdAndDelete(id);
-    
+
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
     }
-    
-    res.json({ success: true, message: "Blog deleted successfully" });
+
+    res.status(200).json({
+      success: true,
+      message: 'Blog deleted successfully'
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error('Error deleting blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete blog',
+      error: error.message
+    });
+  }
+};
+
+// Get blogs by category
+export const getBlogsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const blogs = await Blog.find({ category }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: blogs
+    });
+  } catch (error) {
+    console.error('Error fetching blogs by category:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch blogs',
+      error: error.message
+    });
+  }
+};
+
+// Search blogs
+export const searchBlogs = async (req, res) => {
+  try {
+    const { q } = req.query;
+    const blogs = await Blog.find({
+      $or: [
+        { title: { $regex: q, $options: 'i' } },
+        { shortDescription: { $regex: q, $options: 'i' } },
+        { content: { $regex: q, $options: 'i' } },
+        { authorName: { $regex: q, $options: 'i' } }
+      ]
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: blogs
+    });
+  } catch (error) {
+    console.error('Error searching blogs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to search blogs',
+      error: error.message
+    });
   }
 };

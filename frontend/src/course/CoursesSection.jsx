@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { FaCog, FaBriefcase, FaStethoscope, FaBalanceScale, FaCalculator, FaFlask, FaPalette, FaLaptopCode, FaDraftingCompass, FaUtensils, FaPlane, FaGraduationCap } from "react-icons/fa";
 
 const courses = [
@@ -117,9 +118,11 @@ export default function CoursesSection() {
 
       {/* Button */}
       <div className="flex justify-center mt-10">
+      <Link to="/application-form">
         <button className="bg-[#d4a62a] hover:bg-[#c7981f] text-white px-6 py-3 rounded-lg font-medium shadow transition">
           Find Your Ideal Course →
         </button>
+        </Link>
       </div>
     </div>
   );

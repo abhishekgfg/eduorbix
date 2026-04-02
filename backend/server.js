@@ -3,12 +3,21 @@
   import cors from "cors";
   import dotenv from "dotenv";
   dotenv.config();
-import blogRoutes from "./routes/blogRoutes.js";
+
 import caseStudyRoutes from "./routes/caseStudyRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import studyIndiaProgramRoutes from "./routes/studyIndiaProgramRoutes.js";
 import studyAbroadRoutes from "./routes/studyAbroadRoutes.js";
 import universityRoutes from './routes/universityRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';
+import applicationRoutes from './routes/applicationRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
+import partnerRoutes from './routes/partnerRoutes.js';
+import agentRoutes from './routes/agentRoutes.js'; // Add this line  
+
+
+
+
 
 
 
@@ -34,12 +43,21 @@ import universityRoutes from './routes/universityRoutes.js';
     .catch(err => console.error("❌ MongoDB Error:", err.message));
 
  //use routes
-app.use("/api/blogs", blogRoutes);
+
 app.use("/api/case-studies", caseStudyRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/study-india-programs", studyIndiaProgramRoutes);
 app.use("/api/study-abroad", studyAbroadRoutes);
 app.use('/api/universities', universityRoutes);
+app.use('/api', blogRoutes);
+app.use('/api', applicationRoutes);
+app.use('/api', contactRoutes);
+app.use('/api/partners', partnerRoutes);
+app.use('/api/agents', agentRoutes); // Add this line
+
+
+
+
 
 
 

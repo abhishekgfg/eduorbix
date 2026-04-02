@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function StudyAbroadServices() {
   const services = [
@@ -37,9 +38,12 @@ export default function StudyAbroadServices() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-10">
+         <Link to="/application-form">
           <button className="px-6 py-3 bg-[#c5a46d] text-white rounded-lg text-sm font-medium hover:bg-[#b3925a] transition-all duration-300">
             Get Free Consultation →
           </button>
+          </Link>
+
         </div>
       </div>
     </section>

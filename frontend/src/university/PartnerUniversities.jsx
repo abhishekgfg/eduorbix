@@ -1,5 +1,6 @@
 import React from "react";
 import bgImg from "../images/courseimg.png"; // 👈 apni image path
+import { Link } from "react-router-dom";
 
 export default function PartnerUniversities() {
   return (
@@ -43,12 +44,17 @@ export default function PartnerUniversities() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link to="#university">
           <button className="bg-[#C9A227] text-[#0A1F44] px-6 py-3 rounded-lg font-semibold hover:scale-105 transition">
             Explore Universities
           </button>
+</Link>
+<Link to="/application-form">
           <button className="border border-white/30 px-6 py-3 rounded-lg hover:bg-white/10 transition">
             Get Free Consultation
           </button>
+</Link>
+
         </div>
 
       </div>

@@ -1,53 +1,17 @@
-// import express from "express";
-// import {
-//   createBlog,
-//   getBlogs,
-//   getBlogBySlug,
-//   updateBlog,
-//   deleteBlog
-// } from "../controllers/blogController.js";
-
-// const router = express.Router();
-
-// router.post("/", createBlog);        // create
-// router.get("/", getBlogs);           // get all
-// router.get("/:slug", getBlogBySlug); // get one
-// router.put("/:id", updateBlog);              // update
-// router.delete("/:id", deleteBlog);           // delete
-
-
-// export default router;
-
-
-
-// routes/blogRoutes.js
-import express from "express";
-import {
-  createBlog,
-  getBlogs,
-  getBlogBySlug,
-  updateBlog,
-  deleteBlog
-} from "../controllers/blogController.js";
+import express from 'express';
+import * as blogController from '../controllers/blogController.js';
 
 const router = express.Router();
 
-// IMPORTANT: Order matters! Put specific routes before dynamic routes
+// Blog routes
+router.post('/blogs', blogController.createBlog);
+router.get('/blogs', blogController.getAllBlogs);
+router.get('/blogs/search', blogController.searchBlogs);
+router.get('/blogs/category/:category', blogController.getBlogsByCategory);
+router.get('/blogs/slug/:slug', blogController.getBlogBySlug);
+router.get('/blogs/:id', blogController.getBlogById);
+router.put('/blogs/:id', blogController.updateBlog);
+router.delete('/blogs/:id', blogController.deleteBlog);
 
-// Create blog - POST /api/blogs
-router.post("/", createBlog);
-
-// Get all blogs - GET /api/blogs
-router.get("/", getBlogs);
-
-// Update blog - PUT /api/blogs/:id (place before slug route)
-router.put("/:id", updateBlog);
-
-// Delete blog - DELETE /api/blogs/:id (place before slug route)
-router.delete("/:id", deleteBlog);
-
-// Get blog by slug - GET /api/blogs/:slug (this should be LAST)
-// This will only match if none of the above routes match
-router.get("/:slug", getBlogBySlug);
 
 export default router;

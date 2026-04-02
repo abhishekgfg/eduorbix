@@ -108,7 +108,11 @@ const Sidebar = () => {
               { to: "/study-india-dashboard", icon: FaBook, label: "Study India Dashboard", color: "from-[#FFD700] to-[#FFA500]" },
               { to: "/admin-study-abroad", icon: FaFileAlt, label: "Study Abroad Dashboard  ", color: "from-[#FFD700] to-[#FFA500]" },
               { to: "/admin-universities", icon: FaCalendarAlt, label: "Universities", color: "from-[#FFD700] to-[#FFA500]" },
-              { to: "/progress", icon: FaChartLine, label: "Progress Tracker", color: "from-[#FFD700] to-[#FFA500]" },
+              { to: "/admin-dashboard", icon: FaChartLine, label: "Blog Manager", color: "from-[#FFD700] to-[#FFA500]" },
+              { to: "/admin-contact", icon: FaPhoneAlt, label: "Contact Messages", color: "from-[#FFD700] to-[#FFA500]" },
+              { to: "/admin-applications", icon: FaWpforms, label: "Applications", color: "from-[#FFD700] to-[#FFA500]" },
+              { to: "/agent-dashboard", icon: FaUserGraduate, label: "Agent Dashboard", color: "from-[#FFD700] to-[#FFA500]" },
+              { to: "/partner-dashboard", icon: FaHandHoldingHeart, label: "Partner Dashboard", color: "from-[#FFD700] to-[#FFA500]" },
             ].map((item, index) => (
               <li key={index}>
                 <Link

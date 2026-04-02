@@ -1,5 +1,6 @@
 import React from "react";
 import { User, FileText, Building2, FileCheck, BookOpen, Globe, GraduationCap } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const services = [
   {
@@ -73,10 +74,10 @@ export default function ServicesList() {
 
             {/* Content */}
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 mb-1">
+              <h3 className="font-bold text-xl text-gray-900 mb-1">
                 {item.title}
               </h3>
-              <p className="text-sm text-gray-500 mb-3">{item.desc}</p>
+              <p className="text-medium text-gray-500 mb-3">{item.desc}</p>
 
               <div className="flex flex-wrap gap-2">
                 {item.tags.map((tag, i) => (
@@ -94,9 +95,11 @@ export default function ServicesList() {
 
         {/* Button */}
         <div className="flex justify-center pt-6">
+          <Link to="/application-form">
           <button className="bg-[#c5a46d] text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition">
             Book Free Counselling →
           </button>
+          </Link>
         </div>
       </div>
     </section>
