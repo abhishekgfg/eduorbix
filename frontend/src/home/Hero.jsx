@@ -1,5 +1,6 @@
 import React from "react";
 import img from "../images/hero-bg.jpg";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
@@ -35,14 +36,17 @@ export default function Hero() {
 
         {/* Buttons */}
         <div className="flex flex-wrap gap-4 mb-7">
+          <Link to="/contact">
+            <button className="bg-[#c5a46d] text-black px-6 py-3 rounded-lg text-sm md:text-base font-semibold hover:bg-yellow-500">
+              🎓 Book Free Counselling →
+            </button>
+          </Link>
 
-          <button className="bg-[#c5a46d] text-black px-6 py-3 rounded-lg text-sm md:text-base font-semibold hover:bg-yellow-500">
-            🎓 Book Free Counselling →
-          </button>
-
-          <button className="border border-yellow-400 px-6 py-3 rounded-lg text-sm md:text-base font-semibold hover:bg-yellow-400 hover:text-black transition">
-            📝 Apply Now
-          </button>
+          <Link to="/application-form">
+            <button className="border border-yellow-400 px-6 py-3 rounded-lg text-sm md:text-base font-semibold hover:bg-yellow-400 hover:text-black transition">
+              📝 Apply Now
+            </button>
+          </Link>
 
         </div>
 

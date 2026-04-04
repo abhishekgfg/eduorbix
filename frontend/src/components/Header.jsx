@@ -273,9 +273,12 @@ export default function Header() {
           </nav>
 
           {/* Apply Button */}
-          <button className="hidden md:block bg-[#c5a46d] text-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition">
+          <Link
+            to="/application-form"
+            className="hidden md:block bg-[#c5a46d] text-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition"
+          >
             Apply Now
-          </button>
+          </Link>
 
           {/* Mobile Menu Icon */}
           <div className="md:hidden">
@@ -478,9 +481,14 @@ className="flex items-center gap-2 text-lg bg-white/10 rounded-lg mb-2 text-whit
                 <LogOut size={18} />
                 For Agents
               </Link>
-              <button className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black py-3 rounded-xl font-bold shadow-lg hover:shadow-yellow-500/25 hover:scale-[1.02] transition-all duration-200">
+
+              <Link
+                to="/application-form"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black py-3 rounded-xl font-bold shadow-lg hover:shadow-yellow-500/25 hover:scale-[1.02] transition-all duration-200"
+              >
                 Apply Now →
-              </button>
+              </Link>
             </div>
 
             {/* Contact Info Section */}

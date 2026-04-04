@@ -331,12 +331,13 @@ export default function StudyAbroadDetails() {
 
           {/* Apply Button */}
           <div className="text-center mt-8">
-            <button
-              onClick={() => navigate("/apply")}
-              className="px-10 py-3 bg-[#c5a46d] text-white font-semibold rounded-md hover:bg-[#b3925a] transition-all duration-300 shadow-md"
-            >
-              Apply Now
-            </button>
+            
+           <button
+  onClick={() => navigate("/application-form")}
+  className="px-10 py-3 bg-[#c5a46d] text-white font-semibold rounded-md hover:bg-[#b3925a] transition-all duration-300 shadow-md"
+>
+  Apply Now
+</button>
           </div>
 
           {/* Bottom Line */}

@@ -144,66 +144,11 @@ const Sidebar = () => {
           </ul>
         </div>
 
-        {/* Learning Resources Section */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3 sticky top-0 bg-gradient-to-b from-[#0A1A2F] to-transparent pt-1 pb-2 z-10">
-            <div className="w-1 h-4 bg-gradient-to-b from-[#FFD700] to-[#FFA500] rounded-full"></div>
-            <h3 className="text-xs font-semibold text-[#FFD700] uppercase tracking-wider">
-              Learning Resources
-            </h3>
-          </div>
+       
+       
 
-          <ul className="space-y-1">
-            {[
-              { to: "/video-lectures", icon: FaLaptopCode, label: "Video Lectures", color: "from-[#FFD700] to-[#FFA500]" },
-              { to: "/study-materials", icon: FaBook, label: "Study Materials", color: "from-[#FFD700] to-[#FFA500]" },
-              { to: "/quizzes", icon: MdQuiz, label: "Practice Quizzes", color: "from-[#FFD700] to-[#FFA500]" },
-              { to: "/certificates", icon: FaCertificate, label: "Certificates", color: "from-[#FFD700] to-[#FFA500]" },
-            ].map((item, index) => (
-              <li key={index}>
-                <Link
-                  to={item.to}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-all duration-300 group"
-                >
-                  <div className={`p-1.5 bg-gradient-to-br ${item.color} rounded-lg group-hover:scale-110 transition-transform shadow-md`}>
-                    <item.icon className="w-3 h-3 text-[#0A1A2F]" />
-                  </div>
-                  <span className="text-sm text-gray-300 group-hover:text-white">{item.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Community Section */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3 sticky top-0 bg-gradient-to-b from-[#0A1A2F] to-transparent pt-1 pb-2 z-10">
-            <div className="w-1 h-4 bg-gradient-to-b from-[#FFD700] to-[#FFA500] rounded-full"></div>
-            <h3 className="text-xs font-semibold text-[#FFD700] uppercase tracking-wider">
-              Community
-            </h3>
-          </div>
-
-          <ul className="space-y-1">
-            {[
-              { to: "/discussions", icon: FaUsers, label: "Discussions", color: "from-[#FFD700] to-[#FFA500]" },
-              { to: "/study-groups", icon: FaUserGraduate, label: "Study Groups", color: "from-[#FFD700] to-[#FFA500]" },
-              { to: "/mentors", icon: FaChalkboardTeacher, label: "Find Mentors", color: "from-[#FFD700] to-[#FFA500]" },
-            ].map((item, index) => (
-              <li key={index}>
-                <Link
-                  to={item.to}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-all duration-300 group"
-                >
-                  <div className={`p-1.5 bg-gradient-to-br ${item.color} rounded-lg group-hover:scale-110 transition-transform shadow-md`}>
-                    <item.icon className="w-3 h-3 text-[#0A1A2F]" />
-                  </div>
-                  <span className="text-sm text-gray-300 group-hover:text-white">{item.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        
+     
       </div>
 
       <style jsx>{`

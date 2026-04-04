@@ -8,6 +8,7 @@ import {
   BookOpen,
   ArrowRight
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const programs = [
   {
@@ -122,10 +123,12 @@ export default function Programs() {
 
       {/* Button */}
       <div className="text-center mt-10">
+<Link to="/courses">
         <button className="border border-[#c5a46d] text-[#c5a46d] px-6 py-2.5 rounded-lg font-medium 
         hover:bg-yellow-400 hover:text-black transition">
           View All Courses →
         </button>
+</Link>
       </div>
 
     </section>

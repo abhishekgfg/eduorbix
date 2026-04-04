@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 export default function CTASection() {
   return (
     <section className="bg-gradient-to-br from-[#1f3a63] to-[#243f6b] py-10 px-4 relative overflow-hidden">
@@ -26,13 +27,12 @@ export default function CTASection() {
 
         {/* buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <button className="bg-[#c5a46d] text-black font-semibold px-6 py-3 rounded-md hover:opacity-90 transition">
+          <Link to="/application-form" className="bg-[#c5a46d] text-black font-semibold px-6 py-3 rounded-md hover:opacity-90 transition">
             Book Free Counselling →
-          </button>
-
-          <button className="border border-[#c5a46d] text-white px-6 py-3 rounded-md hover:bg-[#c5a46d] hover:text-black transition">
-            Apply Now
-          </button>
+          </Link>
+            <Link to="/application-form" className="border border-[#c5a46d] text-white px-6 py-3 rounded-md hover:bg-[#c5a46d] hover:text-black transition">
+              Apply Now
+            </Link>
         </div>
       </div>
     </section>
