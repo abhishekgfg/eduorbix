@@ -243,7 +243,7 @@ export default function ProgramDetails() {
         {/* Top Universities */}
         {program.universities && program.universities.length > 0 && (
           <div className="bg-white border rounded-xl p-6 shadow-sm">
-            <h3 className="font-semibold text-xl mb-2">Top Universities</h3>
+            <h3 className="font-semibold text-xl mb-2">Programs</h3>
             <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
             <div className="grid md:grid-cols-2 gap-3 text-[17px]">
               {program.universities.map((uni, index) => (
