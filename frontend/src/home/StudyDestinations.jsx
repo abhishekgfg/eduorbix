@@ -58,7 +58,7 @@ export default function StudyDestinations() {
         </p>
 
         <h2 className="text-4xl md:text-5xl font-bold text-white">
-          Study <span className="text-[#c5a46d]">Destinations</span>
+          Overseas <span className="text-[#c5a46d]">Education</span>
         </h2>
 
         <p className="text-gray-300 mt-3 mb-14">

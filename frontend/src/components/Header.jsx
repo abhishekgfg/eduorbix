@@ -1,18 +1,25 @@
+// Header.jsx (updated with individual category dropdowns for mobile)
 import React, { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, ChevronRight, GraduationCap, Globe, BookOpen, Building, Settings, Heart, Phone, MapPin, Clock, User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
+import logo from "../images/White logo (1).png";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [studyIndiaPrograms, setStudyIndiaPrograms] = useState([]);
   const [studyAbroadCountries, setStudyAbroadCountries] = useState([]);
+  const [categorizedPrograms, setCategorizedPrograms] = useState({});
   const [isStudyIndiaOpen, setIsStudyIndiaOpen] = useState(false);
   const [isMobileStudyIndiaOpen, setIsMobileStudyIndiaOpen] = useState(false);
   const [isStudyAbroadOpen, setIsStudyAbroadOpen] = useState(false);
   const [isMobileStudyAbroadOpen, setIsMobileStudyAbroadOpen] = useState(false);
   const [isProgramsHorizonOpen, setIsProgramsHorizonOpen] = useState(false);
+  const [isMobileProgramsOpen, setIsMobileProgramsOpen] = useState(false);
+  
+  // State for individual category dropdowns in mobile
+  const [mobileOpenCategories, setMobileOpenCategories] = useState({});
   
   let studyIndiaTimeoutRef = useRef(null);
   let studyAbroadTimeoutRef = useRef(null);
@@ -40,7 +47,15 @@ export default function Header() {
     try {
       const response = await axiosInstance.get("/study-india-programs");
       if (response.data.success) {
-        setStudyIndiaPrograms(response.data.data);
+        const programs = response.data.data;
+        setStudyIndiaPrograms(programs);
+        
+        // Categorize programs
+        const categorized = {};
+        programHeadings.forEach(heading => {
+          categorized[heading] = programs.filter(program => program.category === heading);
+        });
+        setCategorizedPrograms(categorized);
       }
     } catch (error) {
       console.error("Error fetching study india programs:", error);
@@ -56,6 +71,14 @@ export default function Header() {
     } catch (error) {
       console.error("Error fetching study abroad countries:", error);
     }
+  };
+
+  // Toggle individual category in mobile
+  const toggleMobileCategory = (heading) => {
+    setMobileOpenCategories(prev => ({
+      ...prev,
+      [heading]: !prev[heading]
+    }));
   };
 
   // Scroll detect
@@ -108,7 +131,7 @@ export default function Header() {
     }, 200);
   };
 
-  // Hover handlers for Programs Horizon - Simple centered row
+  // Hover handlers for Programs Horizon - Now shows categorized dropdown
   const handleProgramsHorizonMouseEnter = () => {
     if (programsHorizonTimeoutRef.current) {
       clearTimeout(programsHorizonTimeoutRef.current);
@@ -141,8 +164,6 @@ export default function Header() {
   const navItems = [
     { path: "/", label: "Home", icon: <GraduationCap size={20} /> },
     { path: "/about-us", label: "About Us", icon: <User size={20} /> },
-    { path: "/courses", label: "Courses", icon: <BookOpen size={20} /> },
-    { path: "/universities", label: "Universities", icon: <Building size={20} /> },
     { path: "/services", label: "Services", icon: <Settings size={20} /> },
     { path: "/scholarships", label: "Scholarships", icon: <Heart size={20} /> },
     { path: "/blogs", label: "Blog", icon: <BookOpen size={20} /> },
@@ -169,18 +190,21 @@ export default function Header() {
         <div className={`text-white px-4 md:px-8 py-4 flex items-center justify-between transition-all duration-300 ${
           scrolled ? "bg-[#0b2a4a]" : "bg-[#0b2a4a]"
         }`}>
-          {/* Logo */}
-          <Link to="/" className="text-xl md:text-2xl font-bold tracking-wide">
-            <span className="text-white">EDU</span>
-            <span className="text-yellow-400">ORBIX</span>
+          {/* Logo - Size Increased */}
+          <Link to="/" className="flex items-center">
+            <img 
+              src={logo} 
+              alt="Eduorbix Logo" 
+              className="h-12 md:h-16 lg:h-15 object-contain" // Increased from h-10 md:h-15 to h-12 md:h-16 lg:h-20
+            />
           </Link>
-
-          {/* Desktop Menu */}
+          
+          {/* Desktop Menu - NO CHANGES */}
           <nav className="hidden md:flex items-center gap-4 text-[16px] font-medium">
             <Link to="/" className="hover:text-yellow-400">Home</Link>
             <Link to="/about-us" className="hover:text-yellow-400">About Us</Link>
 
-            {/* PROGRAMS HORIZON - Simple centered row on hover */}
+            {/* PROGRAMS HORIZON - Categorized dropdown with programs */}
             <div 
               className="relative" 
               ref={programsHorizonRef}
@@ -192,23 +216,53 @@ export default function Header() {
               </button>
 
               {isProgramsHorizonOpen && (
-                <div className="fixed top-[130px] left-0 right-0 z-50 animate-slideDown">
-                  <div className="bg-white shadow-2xl border-t-4 border-yellow-400">
-                    <div className="max-w-7xl mx-auto px-6 py-5">
-                      {/* Simple horizontal row of 5 program headings */}
-                      <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
-                        {programHeadings.map((heading, index) => (
-                          <Link
-                            key={index}
-                            to={`/programs/${heading.toLowerCase().replace(/\s+/g, '-')}`}
-                            className="group relative"
-                          >
-                            <span className="text-gray-700 hover:text-yellow-500 font-semibold text-sm md:text-base whitespace-nowrap transition-colors duration-200 block py-2">
-                              {heading}
-                            </span>
-                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300"></span>
-                          </Link>
-                        ))}
+                <div className="fixed top-[100px] left-5 right-5 z-50 animate-slideDown">            
+                  <div className="bg-white rounded-lg shadow-2xl border-t-4 border-yellow-400">                    
+                    <div className="max-h-[80vh] overflow-y-auto">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3 p-3">
+                        {programHeadings.map((heading, index) => {
+                          const programsInCategory = categorizedPrograms[heading] || [];
+                          return (
+                            <div key={index} className="space-y-2">
+                              <Link
+                                to={`/programs/category/${encodeURIComponent(heading)}`}
+                                className="block"
+                              >
+                                <h3 className="inline-block font-semibold text-[14px] text-[#0b2a4a] border-b border-yellow-400 pb-[2px] mb-1 hover:text-yellow-600 transition-colors">    
+                                  {heading}
+                                </h3>
+                              </Link>
+                              {programsInCategory.length > 0 ? (
+                                <ul className="space-y-2">
+                                  {programsInCategory.slice(0, 5).map((program) => (
+                                    <li key={program._id}>
+                                      <Link
+                                        to={`/program/${program._id}`}
+                                        onClick={() => setIsProgramsHorizonOpen(false)}
+                                        className="text-sm text-gray-600 hover:text-yellow-600 hover:pl-2 transition-all duration-200 block"
+                                      >
+                                        {program.title.length > 40 ? program.title.slice(0, 40) + "..." : program.title}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                  {programsInCategory.length > 5 && (
+                                    <li>
+                                      <Link
+                                        to={`/programs/category/${encodeURIComponent(heading)}`}
+                                        onClick={() => setIsProgramsHorizonOpen(false)}
+                                        className="text-xs text-yellow-600 hover:text-yellow-700 font-medium"
+                                      >
+                                        + {programsInCategory.length - 5} more...
+                                      </Link>
+                                    </li>
+                                  )}
+                                </ul>
+                              ) : (
+                                <p className="text-sm text-gray-400 italic">No programs yet</p>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -216,33 +270,10 @@ export default function Header() {
               )}
             </div>
 
-            {/* Study in India Dropdown */}
-            <div className="relative" ref={dropdownRef} onMouseEnter={handleStudyIndiaMouseEnter} onMouseLeave={handleStudyIndiaMouseLeave}>
-              <button className="flex items-center gap-1 hover:text-yellow-400 focus:outline-none cursor-pointer">
-                Study in India <ChevronDown size={16} />
-              </button>
-              {isStudyIndiaOpen && (
-                <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-2 z-50 animate-slideDown max-h-96 overflow-y-auto">
-                  <Link to="/study-in-india" onClick={() => setIsStudyIndiaOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-yellow-600 transition-colors font-semibold border-b border-gray-200">
-                    📚 View All Programs
-                  </Link>
-                  {studyIndiaPrograms.length > 0 ? (
-                    studyIndiaPrograms.map((program) => (
-                      <Link key={program._id} to={`/program/${program._id}`} onClick={() => setIsStudyIndiaOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-yellow-600 transition-colors">
-                        {program.title}
-                      </Link>
-                    ))
-                  ) : (
-                    <div className="px-4 py-2 text-gray-500 text-sm">Loading programs...</div>
-                  )}
-                </div>
-              )}
-            </div>
-
             {/* Study Abroad Dropdown */}
             <div className="relative" ref={studyAbroadDropdownRef} onMouseEnter={handleStudyAbroadMouseEnter} onMouseLeave={handleStudyAbroadMouseLeave}>
               <button className="flex items-center gap-1 hover:text-yellow-400 focus:outline-none cursor-pointer">
-                Study Abroad <ChevronDown size={16} />
+                Overseas Education <ChevronDown size={16} />
               </button>
               {isStudyAbroadOpen && (
                 <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-2 z-50 animate-slideDown max-h-96 overflow-y-auto">
@@ -262,8 +293,6 @@ export default function Header() {
               )}
             </div>
 
-            <Link to="/courses" className="hover:text-yellow-400">Courses</Link>
-            <Link to="/universities" className="hover:text-yellow-400">Universities</Link>
             <Link to="/services" className="hover:text-yellow-400">Services</Link>
             <Link to="/scholarships" className="hover:text-yellow-400">Scholarships</Link>
             <Link to="/blogs" className="hover:text-yellow-400">Blog</Link>
@@ -284,7 +313,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Sidebar - UPDATED with individual category dropdowns */}
       {isOpen && (
         <div className="fixed inset-0 z-50 md:hidden" onClick={() => setIsOpen(false)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300" onClick={() => setIsOpen(false)} />
@@ -303,6 +332,7 @@ export default function Header() {
               </div>
             </div>
 
+            {/* Regular Nav Items */}
             <div className="px-5 py-6 space-y-1">
               {navItems.map((item, index) => (
                 <Link key={item.path} to={item.path} className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200 group" onClick={() => setIsOpen(false)}>
@@ -313,21 +343,91 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Mobile Programs Section - Simple list */}
+            {/* Mobile Programs Section - UPDATED with individual dropdowns for each category */}
             <div className="px-5 mt-2">
-              <div className="mb-2 px-4 py-2 bg-white/10 rounded-xl">
-                <p className="text-yellow-400 text-xs font-semibold mb-3">PROGRAMS</p>
-                <div className="space-y-3">
-                  {programHeadings.map((heading, idx) => (
-                    <Link key={idx} to={`/programs/${heading.toLowerCase().replace(/\s+/g, '-')}`} onClick={() => setIsOpen(false)} className="block text-white/80 hover:text-yellow-400 text-sm py-1 transition-colors">
-                      {heading}
-                    </Link>
-                  ))}
+              <button 
+                onClick={() => setIsMobileProgramsOpen(!isMobileProgramsOpen)} 
+                className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all duration-200 group"
+              >
+                <div className="flex items-center gap-3">
+                  <BookOpen size={20} className="text-yellow-400" />
+                  <span className="font-medium">Programs</span>
                 </div>
-              </div>
+                <ChevronDown size={18} className={`text-yellow-400 transition-transform duration-300 ${isMobileProgramsOpen ? "rotate-180" : ""}`} />
+              </button>
+              
+              {isMobileProgramsOpen && (
+                <div className="mt-3 space-y-3 ml-2 overflow-hidden animate-slideDown">
+                  {programHeadings.map((heading, idx) => {
+                    const programsInCategory = categorizedPrograms[heading] || [];
+                    return (
+                      <div key={idx} className="space-y-1">
+                        {/* Category Header with its own dropdown toggle */}
+                        <button
+                          onClick={() => toggleMobileCategory(heading)}
+                          className="flex items-center justify-between w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group"
+                        >
+                          <Link 
+                            to={`/programs/category/${encodeURIComponent(heading)}`} 
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-yellow-400 font-semibold text-sm hover:text-yellow-300 transition-colors flex-1"
+                          >
+                            {heading}
+                          </Link>
+                          <ChevronDown 
+                            size={16} 
+                            className={`text-yellow-400 transition-transform duration-200 ${mobileOpenCategories[heading] ? "rotate-180" : ""}`}
+                          />
+                        </button>
+                        
+                        {/* Programs list for this category (visible when dropdown is open) */}
+                        {mobileOpenCategories[heading] && (
+                          <div className="pl-4 space-y-1 pb-2 overflow-hidden animate-slideDown">
+                            {programsInCategory.length > 0 ? (
+                              <>
+                                {programsInCategory.slice(0, 5).map((program) => (
+                                  <Link 
+                                    key={program._id}
+                                    to={`/program/${program._id}`} 
+                                    onClick={() => setIsOpen(false)} 
+                                    className="block text-white/70 hover:text-yellow-400 text-xs py-2 px-3 transition-colors rounded-lg hover:bg-white/5"
+                                  >
+                                    • {program.title.length > 35 ? program.title.slice(0, 35) + "..." : program.title}
+                                  </Link>
+                                ))}
+                                {programsInCategory.length > 5 && (
+                                  <Link 
+                                    to={`/programs/category/${encodeURIComponent(heading)}`}
+                                    onClick={() => setIsOpen(false)}
+                                    className="block text-yellow-400/70 text-xs hover:text-yellow-300 mt-1 px-3 py-1"
+                                  >
+                                    + {programsInCategory.length - 5} more programs...
+                                  </Link>
+                                )}
+                              </>
+                            ) : (
+                              <p className="text-xs text-white/40 px-3 py-2 italic">No programs available</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  
+                  {/* View All Programs Link */}
+                  <Link 
+                    to="/study-in-india" 
+                    onClick={() => setIsOpen(false)} 
+                    className="block text-center text-sm text-yellow-400 hover:text-yellow-300 pt-3 pb-2 border-t border-white/10 mt-2"
+                  >
+                    📚 View All Programs
+                  </Link>
+                </div>
+              )}
             </div>
 
-            <div className="px-5 mt-2">
+            {/* Mobile Study in India Section */}
+            <div className="px-5 mt-3">
               <button onClick={() => setIsMobileStudyIndiaOpen(!isMobileStudyIndiaOpen)} className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all duration-200 group">
                 <div className="flex items-center gap-3">
                   <GraduationCap size={20} className="text-yellow-400" />
@@ -353,11 +453,12 @@ export default function Header() {
               )}
             </div>
 
+            {/* Mobile Study Abroad Section */}
             <div className="px-5 mt-3">
               <button onClick={() => setIsMobileStudyAbroadOpen(!isMobileStudyAbroadOpen)} className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all duration-200 group">
                 <div className="flex items-center gap-3">
                   <Globe size={20} className="text-yellow-400" />
-                  <span className="font-medium">Study Abroad</span>
+                  <span className="font-medium">OVERSEAS EDUCATION</span>
                 </div>
                 <ChevronDown size={18} className={`text-yellow-400 transition-transform duration-300 ${isMobileStudyAbroadOpen ? "rotate-180" : ""}`} />
               </button>
@@ -380,6 +481,7 @@ export default function Header() {
               )}
             </div>
 
+            {/* Action Buttons */}
             <div className="px-5 mt-8 space-y-3">
               <Link to="/partner" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 w-full bg-white/10 backdrop-blur-sm text-white py-3 rounded-xl font-medium hover:bg-white/20 transition-all duration-200 border border-white/20">
                 <User size={18} /> Partner With Us
@@ -392,6 +494,7 @@ export default function Header() {
               </Link>
             </div>
 
+            {/* Footer Info */}
             <div className="px-5 mt-8 pb-8 pt-4 border-t border-white/10">
               <div className="flex items-center gap-3 text-white/60 text-xs"><Phone size={14} /><span>+91 XXXXXXXXXX</span></div>
               <div className="flex items-center gap-3 text-white/60 text-xs mt-2"><MapPin size={14} /><span>Your Education Partner</span></div>

@@ -9,11 +9,28 @@ const axiosInstance = axios.create({
   },
 });
 
-// Optional: interceptors for error handling
+// Request interceptor for debugging
+axiosInstance.interceptors.request.use(
+  (config) => {
+    console.log(`📤 ${config.method.toUpperCase()} request to: ${config.baseURL}${config.url}`);
+    console.log("Request data:", config.data);
+    return config;
+  },
+  (error) => {
+    console.error("Request error:", error);
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for error handling
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`📥 Response from ${response.config.url}:`, response.status);
+    return response;
+  },
   (error) => {
     console.error("API Error:", error.response?.data || error.message);
+    console.error("Full error:", error);
     return Promise.reject(error);
   }
 );

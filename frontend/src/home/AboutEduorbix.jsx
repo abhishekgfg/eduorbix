@@ -166,12 +166,12 @@
 
 
 
-
 import React from "react";
+import { Link } from "react-router-dom"; // Remove Navigate if not needed
 
 export default function AboutEduorbix() {
   return (
-    <section className="min-h-screen  py-16 px-4 flex items-center relative overflow-hidden">
+    <section className="min-h-screen py-16 px-4 flex items-center relative overflow-hidden">
       {/* Modern Abstract Background */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-full h-full bg-[#c5a46d]/[0.02]"></div>
@@ -183,33 +183,25 @@ export default function AboutEduorbix() {
         </svg>
       </div>
 
-
-
-
-
-     
-      
-      
-      {/* Geometric Patterns */}
-      
-     <div className="max-w-1xl mx-auto relative">
-       {/* Header with decorative line */}
-       <div className="text-center mb-10">
+      <div className="max-w-1xl mx-auto relative">
+        {/* Header with decorative line */}
+        <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-4 mb-6">
-           <div className="h-px w-12 bg-[#c5a46d]/30"></div>
-          <span className="text-[#c5a46d] uppercase tracking-[0.3em] text-sm font-semibold">
-            About Us
-</span>
-           <div className="h-px w-12 bg-[#c5a46d]/30"></div>
+            <div className="h-px w-12 bg-[#c5a46d]/30"></div>
+            <span className="text-[#c5a46d] uppercase tracking-[0.3em] text-sm font-semibold">
+              About Us
+            </span>
+            <div className="h-px w-12 bg-[#c5a46d]/30"></div>
           </div>
           
-          <h2 className="text-4xl md:text-5xl lg:text-4xl font-bold text-[#1e2a38] mb-6">             About <span className="text-[#c5a46d] relative inline-block">Eduorbix
-               <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 120 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-               <path d="M2 6C32.5 2 87.5 2 118 6" stroke="#c5a46d" strokeWidth="3" strokeLinecap="round"/>
-             </svg>
+          <h2 className="text-4xl md:text-5xl lg:text-4xl font-bold text-[#1e2a38] mb-6">
+            About <span className="text-[#c5a46d] relative inline-block">Eduorbix
+              <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 120 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 6C32.5 2 87.5 2 118 6" stroke="#c5a46d" strokeWidth="3" strokeLinecap="round"/>
+              </svg>
             </span>
-           </h2>
-       </div>
+          </h2>
+        </div>
 
         {/* Main Content - Split Layout */}
         <div className="grid lg:grid-cols-2 gap-8 items-stretch">
@@ -288,7 +280,7 @@ export default function AboutEduorbix() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar - FIXED BUTTON */}
         <div className="mt-12 flex flex-wrap items-center justify-between gap-6 p-6 bg-white/50 backdrop-blur-sm rounded-2xl border border-[#c5a46d]/10">
           <div className="flex items-center gap-4">
             <div className="flex -space-x-2">
@@ -301,12 +293,15 @@ export default function AboutEduorbix() {
             <span className="text-sm text-gray-600">Trusted by 5000+ students</span>
           </div>
           
-          <button className="group flex items-center gap-3 px-6 py-3 bg-[#1e2a38] text-white rounded-full hover:bg-[#c5a46d] transition-all duration-300 shadow-lg hover:shadow-xl">
-            <span>Start your journey</span>
+          <Link 
+            to="/about-us" 
+            className="group flex items-center gap-3 px-6 py-3 bg-[#1e2a38] text-white rounded-full hover:bg-[#c5a46d] transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            <span>About More</span>
             <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </button>
+          </Link>
         </div>
 
         {/* Floating Elements */}

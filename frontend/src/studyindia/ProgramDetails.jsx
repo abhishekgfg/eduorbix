@@ -1,126 +1,3 @@
-// import React from "react";
-
-// export default function ProgramDetails() {
-//   return (
-//     <div className="bg-gray-100 min-h-screen pb-20">
-
-//       {/* HERO SECTION (UNCHANGED) */}
-//       <div className="bg-[#1f3b63] text-center text-white py-20 px-4">
-//         <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-//           Engineering Programs (B.Tech /{" "}
-//           <span className="text-[#c5a46d]">M.Tech</span>)
-//         </h1>
-
-//         <p className="text-base md:text-lg text-gray-200 max-w-2xl mx-auto leading-relaxed">
-//           India has some of the finest engineering institutions in the world.
-//           From IITs to NITs and top private universities, Eduglobe helps you
-//           find the perfect engineering college.
-//         </p>
-//       </div>
-
-//       {/* CONTENT */}
-//       <div className="max-w-4xl mx-auto mt-12 space-y-6 px-4">
-
-//         {/* TOP 2 CARDS */}
-//         <div className="grid md:grid-cols-2 gap-5">
-
-//           {/* Duration */}
-//           <div className="bg-white border rounded-xl p-5 shadow-sm">
-//             <p className="text-lg font-semibold mb-1">Duration</p>
-//             <div className="w-10 h-[2px] bg-[#c5a46d] mb-2"></div>
-
-//             <p className="text-gray-600 text-[17px] leading-relaxed">
-//               4 years (B.Tech) / 2 years (M.Tech)
-//             </p>
-//           </div>
-
-//           {/* Fee */}
-//           <div className="bg-white border rounded-xl p-5 shadow-sm">
-//             <p className="text-lg font-semibold mb-1">Fee Range</p>
-//             <div className="w-10 h-[2px] bg-[#c5a46d] mb-2"></div>
-
-//             <p className="text-gray-600 text-[17px] leading-relaxed">
-//               ₹2 lakhs – ₹20 lakhs per year
-//             </p>
-//           </div>
-
-//         </div>
-
-//         {/* ELIGIBILITY */}
-//         <div className="bg-white border rounded-xl p-6 shadow-sm">
-//           <h3 className="font-semibold text-xl mb-2">Eligibility</h3>
-//           <div className="w-12 h-[2px] bg-[#c5a46d] mb-3"></div>
-
-//           <ul className="text-[17px] text-gray-600 space-y-2 leading-relaxed">
-//             <li>✓ 10+2 with Physics, Chemistry & Mathematics</li>
-//             <li>✓ JEE Main / JEE Advanced / State CET scores</li>
-//             <li>✓ Minimum 60% aggregate (varies by institution)</li>
-//           </ul>
-//         </div>
-
-//         {/* TOP UNIVERSITIES */}
-//         <div className="bg-white border rounded-xl p-6 shadow-sm">
-//           <h3 className="font-semibold text-xl mb-2">Top Universities</h3>
-//           <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
-
-//           <div className="grid md:grid-cols-2 gap-3 text-[17px]">
-//             {[
-//               "IIT Delhi",
-//               "IIT Bombay",
-//               "NIT Trichy",
-//               "BITS Pilani",
-//               "VIT Vellore",
-//               "SRM University",
-//             ].map((item, i) => (
-//               <div
-//                 key={i}
-//                 className="bg-gray-100 px-4 py-2 rounded-md"
-//               >
-//                 🎓 {item}
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* ADMISSION PROCESS */}
-//         <div className="bg-white border rounded-xl p-6 shadow-sm">
-//           <h3 className="font-semibold text-xl mb-2">Admission Process</h3>
-//           <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
-
-//           <div className="space-y-3 text-[17px] text-gray-600">
-//             {[
-//               "Entrance exam qualification",
-//               "Counselling round",
-//               "Document verification",
-//               "Fee payment & confirmation",
-//             ].map((step, i) => (
-//               <div key={i} className="flex items-center gap-3">
-//                 <span className="bg-[#c5a46d] text-white w-8 h-8 flex items-center justify-center rounded-full text-base font-semibold">
-//                   {i + 1}
-//                 </span>
-//                 {step}
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* BUTTON */}
-//         <div className="text-center pt-4">
-//           <button className="bg-[#c5a46d] px-8 py-3 rounded-md text-lg font-semibold hover:bg-yellow-500 transition">
-//             Apply Now
-//           </button>
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
@@ -133,14 +10,28 @@ export default function ProgramDetails() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchProgramDetails();
+    if (id) {
+      fetchProgramDetails();
+    } else {
+      setError("Invalid program ID");
+      setLoading(false);
+    }
   }, [id]);
 
   const fetchProgramDetails = async () => {
     try {
       setLoading(true);
+      setError(null);
+      console.log("Fetching program with ID:", id);
+      
       const response = await axiosInstance.get(`/study-india-programs/${id}`);
-      if (response.data.success) {
+      console.log("API Response:", response.data);
+      
+      // Check if response has data property
+      if (response.data && response.data.success && response.data.data) {
+        setProgram(response.data.data);
+      } else if (response.data && response.data.data) {
+        // Handle case where success field might be missing
         setProgram(response.data.data);
       } else {
         setError("Program not found");
@@ -149,8 +40,10 @@ export default function ProgramDetails() {
       console.error("Error fetching program details:", err);
       if (err.response?.status === 404) {
         setError("Program not found");
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
       } else {
-        setError(err.response?.data?.message || "Failed to fetch program details");
+        setError("Failed to fetch program details. Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -158,7 +51,7 @@ export default function ProgramDetails() {
   };
 
   const handleApplyNow = () => {
-    navigate("/application-form", { state: { program: program.title } });
+    navigate("/application-form", { state: { program: program?.title } });
   };
 
   if (loading) {
@@ -197,13 +90,32 @@ export default function ProgramDetails() {
         <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
           {program.title}
         </h1>
-        <p className="text-base md:text-lg text-gray-200 max-w-2xl mx-auto leading-relaxed">
-          {program.description}
-        </p>
+        {program.description && (
+          <p className="text-base md:text-lg text-gray-200 max-w-2xl mx-auto leading-relaxed">
+            {program.description}
+          </p>
+        )}
       </div>
 
       {/* CONTENT */}
-      <div className="max-w-4xl mx-auto mt-12 space-y-6 px-4">
+      <div className="max-w-6xl mx-auto mt-12 space-y-6 px-4">
+           {program.universities && program.universities.length > 0 && (
+          <div className="bg-white border rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold text-xl mb-2">Top Programs</h3>
+            <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
+            <div className="grid md:grid-cols-2 gap-3 text-[17px]">
+              {program.universities.map((uni, index) => (
+                <div key={index} className="bg-gray-100 px-4 py-2 rounded-md">
+                  🎓 {uni}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Program Overview & Outcomes - SIDE BY SIDE ROW */}
+       
+
         {/* Duration and Fee Cards */}
         <div className="grid md:grid-cols-2 gap-5">
           {program.duration && (
@@ -230,7 +142,7 @@ export default function ProgramDetails() {
         {/* Eligibility */}
         {program.eligibility && program.eligibility.length > 0 && (
           <div className="bg-white border rounded-xl p-6 shadow-sm">
-            <h3 className="font-semibold text-xl mb-2">Eligibility</h3>
+            <h3 className="font-semibold text-xl mb-2">Eligibility Criteria</h3>
             <div className="w-12 h-[2px] bg-[#c5a46d] mb-3"></div>
             <ul className="text-[17px] text-gray-600 space-y-2 leading-relaxed">
               {program.eligibility.map((item, index) => (
@@ -241,20 +153,7 @@ export default function ProgramDetails() {
         )}
 
         {/* Top Universities */}
-        {program.universities && program.universities.length > 0 && (
-          <div className="bg-white border rounded-xl p-6 shadow-sm">
-            <h3 className="font-semibold text-xl mb-2">Programs</h3>
-            <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
-            <div className="grid md:grid-cols-2 gap-3 text-[17px]">
-              {program.universities.map((uni, index) => (
-                <div key={index} className="bg-gray-100 px-4 py-2 rounded-md">
-                  🎓 {uni}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
+     
         {/* Admission Process */}
         {program.admission && program.admission.length > 0 && (
           <div className="bg-white border rounded-xl p-6 shadow-sm">
@@ -270,6 +169,38 @@ export default function ProgramDetails() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+ <div className="grid md:grid-cols-2 gap-5">
+          
+          {/* Program Overview */}
+          {program.programOverview && (
+            <div className="bg-white border rounded-xl p-6 shadow-sm h-full">
+              <h3 className="font-semibold text-xl mb-2">Program Overview</h3>
+              <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
+              <div className="text-gray-600 text-[17px] leading-relaxed whitespace-pre-wrap">
+                {program.programOverview}
+              </div>
+            </div>
+          )}
+
+          {/* Program Outcomes */}
+          {program.programOutcomes && (
+            <div className="bg-white border rounded-xl p-6 shadow-sm h-full">
+              <h3 className="font-semibold text-xl mb-2">Program Outcomes</h3>
+              <div className="w-12 h-[2px] bg-[#c5a46d] mb-4"></div>
+              <div className="text-gray-600 text-[17px] leading-relaxed whitespace-pre-wrap">
+                {program.programOutcomes}
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Category Badge - Optional */}
+        {program.category && (
+          <div className="text-center">
+            <span className="inline-block bg-[#1f3b63] text-white px-4 py-1 rounded-full text-sm">
+              {program.category}
+            </span>
           </div>
         )}
 

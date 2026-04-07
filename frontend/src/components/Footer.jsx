@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Phone, Mail, MapPin } from "lucide-react";
+import logo from "../images/White logo (1).png";
 
 export default function Footer() {
   return (
@@ -13,9 +14,7 @@ export default function Footer() {
 
           {/* Left Section */}
           <div>
-            <h2 className="text-2xl font-bold text-yellow-400 mb-4">
-              EDUORBIX
-            </h2>
+            <img src={logo} alt="Eduorbix Logo" className="h-12 md:h-16 lg:h-15 object-contain mb-4" />
 
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
               Professional education consultancy dedicated to helping students

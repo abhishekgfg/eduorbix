@@ -58,22 +58,31 @@ export default function AdminStudyIndiaDashboard() {
     setIsViewModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this program?")) {
-      try {
-        const response = await axiosInstance.delete(`/study-india-programs/${id}`);
-        if (response.data.success) {
-          await fetchPrograms();
-        } else {
-          setError(response.data.message || "Failed to delete program");
-        }
-      } catch (error) {
-        console.error("Error deleting program:", error);
-        setError(error.response?.data?.message || "Failed to delete program");
+const handleDelete = async (id) => {
+  if (window.confirm("Are you sure you want to delete this program?")) {
+    try {
+      setLoading(true);
+      setError(null); // Clear any previous errors
+      
+      const response = await axiosInstance.delete(`/study-india-programs/${id}`);
+      
+      if (response.data.success) {
+        // Remove the deleted program from the state immediately
+        setPrograms(prevPrograms => prevPrograms.filter(program => program._id !== id));
+        alert("Program deleted successfully!");
+      } else {
+        setError(response.data.message || "Failed to delete program");
       }
+    } catch (error) {
+      console.error("Error deleting program:", error);
+      const errorMessage = error.response?.data?.message || "Failed to delete program. Please try again.";
+      setError(errorMessage);
+      alert(errorMessage); // Show alert for better user feedback
+    } finally {
+      setLoading(false);
     }
-  };
-
+  }
+};
   // Filter programs based on search
   const filteredPrograms = programs.filter(program => {
     const matchesSearch = program.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -136,7 +145,7 @@ export default function AdminStudyIndiaDashboard() {
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border-l-4 border-[#FFD700]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-xs sm:text-sm">Total Programs</p>
+                <p className="text-gray-500 text-xs sm:text-sm">Total decipline</p>
                 <p className="text-xl sm:text-2xl font-bold text-gray-800">{stats.total}</p>
               </div>
               <FaBook className="text-2xl sm:text-3xl text-[#FFD700] opacity-50" />
@@ -145,7 +154,7 @@ export default function AdminStudyIndiaDashboard() {
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border-l-4 border-green-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-xs sm:text-sm">Total Universities</p>
+                <p className="text-gray-500 text-xs sm:text-sm">Total Program</p>
                 <p className="text-xl sm:text-2xl font-bold text-gray-800">{stats.totalUniversities}</p>
               </div>
               <FaGraduationCap className="text-2xl sm:text-3xl text-green-500 opacity-50" />
@@ -206,7 +215,7 @@ export default function AdminStudyIndiaDashboard() {
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program Title</th>
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Duration</th>
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Fee Range</th>
-                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Universities</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Created At</th>
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -233,7 +242,7 @@ export default function AdminStudyIndiaDashboard() {
                       </td>
                       <td className="px-3 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">
                         <span className="px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-800 rounded-full text-[10px] sm:text-xs whitespace-nowrap">
-                          {program.universities?.length || 0} Universities
+                          {program.universities?.length || 0} Program{program.universities?.length === 1 ? '' : 's'}  
                         </span>
                       </td>
                       <td className="px-3 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden lg:table-cell">

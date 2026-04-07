@@ -12,10 +12,12 @@ import {
   FaBook,
   FaClock,
   FaMoneyBillWave,
-  FaGraduationCap,
   FaUniversity,
   FaList,
-  FaCheckCircle
+  FaCheckCircle,
+  FaTag,
+  FaEye,
+  FaBullhorn
 } from "react-icons/fa";
 
 export default function AdminStudyIndiaProgram() {
@@ -25,31 +27,44 @@ export default function AdminStudyIndiaProgram() {
   const [form, setForm] = useState({
     title: "",
     description: "",
+    programOverview: "",
+    programOutcomes: "",
     duration: "",
     fee: "",
+    category: "REGULAR PROGRAMS",
     eligibility: [""],
     universities: [""],
     admission: [""],
   });
 
+  const programCategories = [
+    "REGULAR PROGRAMS",
+    "COUNCIL APPROVED PROGRAMS",
+    "SKILLED BASED INDUSTRY INTEGRATED PROGRAMS",
+    "ONLINE & DISTANCE MODE EDUCATION",
+    "BOARD EDUCATION"
+  ];
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    console.log(`Updating ${name}:`, value);
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleArrayChange = (type, index, value) => {
     const updated = [...form[type]];
     updated[index] = value;
-    setForm({ ...form, [type]: updated });
+    setForm(prev => ({ ...prev, [type]: updated }));
   };
 
   const addField = (type) => {
-    setForm({ ...form, [type]: [...form[type], ""] });
+    setForm(prev => ({ ...prev, [type]: [...prev[type], ""] }));
   };
 
   const removeField = (type, index) => {
     const updated = [...form[type]];
     updated.splice(index, 1);
-    setForm({ ...form, [type]: updated });
+    setForm(prev => ({ ...prev, [type]: updated }));
   };
 
   const handleSubmit = async (e) => {
@@ -58,15 +73,54 @@ export default function AdminStudyIndiaProgram() {
     setError(null);
 
     try {
-      // Remove empty fields from arrays
-      const cleanedForm = {
-        ...form,
-        eligibility: form.eligibility.filter((i) => i.trim() !== ""),
-        universities: form.universities.filter((i) => i.trim() !== ""),
-        admission: form.admission.filter((i) => i.trim() !== ""),
+      // Log current form state for debugging
+      console.log("=== CURRENT FORM DATA ===");
+      console.log("Title:", form.title);
+      console.log("Program Overview:", form.programOverview);
+      console.log("Program Outcomes:", form.programOutcomes);
+      console.log("Full form:", form);
+
+      // Validate required fields
+      if (!form.title || !form.title.trim()) {
+        throw new Error("Program title is required");
+      }
+      
+      if (!form.programOverview || !form.programOverview.trim()) {
+        console.error("❌ programOverview is empty!");
+        throw new Error("Program overview is required");
+      }
+      
+      if (!form.programOutcomes || !form.programOutcomes.trim()) {
+        console.error("❌ programOutcomes is empty!");
+        throw new Error("Program outcomes is required");
+      }
+
+      // Prepare data for submission - EXPLICITLY include all fields
+      const submissionData = {
+        title: form.title.trim(),
+        description: form.description ? form.description.trim() : "",
+        programOverview: form.programOverview.trim(),
+        programOutcomes: form.programOutcomes.trim(),
+        duration: form.duration ? form.duration.trim() : "",
+        fee: form.fee ? form.fee.trim() : "",
+        category: form.category,
+        eligibility: form.eligibility.filter(item => item && item.trim() !== ""),
+        universities: form.universities.filter(item => item && item.trim() !== ""),
+        admission: form.admission.filter(item => item && item.trim() !== ""),
       };
 
-      const res = await axiosInstance.post("/study-india-programs", cleanedForm);
+      console.log("=== SUBMITTING DATA TO:", `${axiosInstance.defaults.baseURL}/study-india-programs`);
+      console.log("Request payload:", JSON.stringify(submissionData, null, 2));
+
+      // Send request with proper headers
+      const res = await axiosInstance.post("/study-india-programs", submissionData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log("=== SERVER RESPONSE ===");
+      console.log(res.data);
 
       if (res.data.success) {
         alert("✅ Program Saved Successfully!");
@@ -74,18 +128,39 @@ export default function AdminStudyIndiaProgram() {
         setForm({
           title: "",
           description: "",
+          programOverview: "",
+          programOutcomes: "",
           duration: "",
           fee: "",
+          category: "REGULAR PROGRAMS",
           eligibility: [""],
           universities: [""],
           admission: [""],
         });
+        // Optionally navigate back after 1 second
+        setTimeout(() => {
+         navigate("/study-india-dashboard");
+        }, 1000);
       } else {
         setError(res.data.message || "Failed to save program");
       }
     } catch (error) {
-      console.error("Error saving program:", error);
-      setError(error.response?.data?.message || "Failed to save program. Please check your connection.");
+      console.error("=== ERROR SAVING PROGRAM ===");
+      console.error("Error object:", error);
+      console.error("Error response:", error.response?.data);
+      console.error("Error status:", error.response?.status);
+      console.error("Error message:", error.message);
+      
+      let errorMessage = "Failed to save program. ";
+      if (error.response?.data?.message) {
+        errorMessage += error.response.data.message;
+      } else if (error.message) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += "Please check your connection and try again.";
+      }
+      
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -166,19 +241,72 @@ export default function AdminStudyIndiaProgram() {
                 />
               </div>
 
-              {/* Description */}
+              {/* Category Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
+                  <FaTag className="inline mr-1 text-[#FFD700] text-xs" /> Program Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all bg-white"
+                >
+                  {programCategories.map((cat, idx) => (
+                    <option key={idx} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Select which category this program belongs to</p>
+              </div>
+
+              {/* Short Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Short Description
                 </label>
                 <textarea
                   name="description"
-                  placeholder="Program description..."
+                  placeholder="Brief description of the program..."
                   value={form.description}
                   onChange={handleChange}
-                  rows="3"
+                  rows="2"
                   className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all"
                 />
+              </div>
+
+              {/* Program Overview - Large Text Area */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <FaEye className="inline mr-1 text-blue-500 text-xs" /> Program Overview <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  name="programOverview"
+                  placeholder="Write a detailed overview of the program including curriculum, teaching methodology, facilities, etc..."
+                  value={form.programOverview}
+                  onChange={handleChange}
+                  required
+                  rows="8"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">Provide comprehensive information about what this program offers</p>
+              </div>
+
+              {/* Program Outcomes - Large Text Area */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <FaBullhorn className="inline mr-1 text-green-500 text-xs" /> Program Outcomes <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  name="programOutcomes"
+                  placeholder="Describe what students will achieve after completing this program - career opportunities, skills gained, further education options, etc..."
+                  value={form.programOutcomes}
+                  onChange={handleChange}
+                  required
+                  rows="6"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">Explain the learning outcomes, career prospects, and benefits for students</p>
               </div>
 
               {/* Duration and Fee */}
@@ -259,7 +387,7 @@ export default function AdminStudyIndiaProgram() {
                 <h3 className="text-md font-semibold text-gray-800 flex items-center gap-2">
                   <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
                   <FaUniversity className="text-blue-500 text-sm" />
-                  Top Universities
+                  Programs Name
                 </h3>
               </div>
 
@@ -267,7 +395,7 @@ export default function AdminStudyIndiaProgram() {
                 <div key={i} className="flex gap-2">
                   <input
                     type="text"
-                    placeholder={`University ${i + 1}`}
+                    placeholder={`Program ${i + 1}`}
                     value={item}
                     onChange={(e) => handleArrayChange("universities", i, e.target.value)}
                     className="flex-1 border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all"
@@ -289,7 +417,7 @@ export default function AdminStudyIndiaProgram() {
                 className="text-sm text-[#FFD700] hover:text-[#FFA500] flex items-center gap-1 font-medium"
               >
                 <FaPlus className="text-xs" />
-                Add University
+                Add Program
               </button>
             </div>
 
