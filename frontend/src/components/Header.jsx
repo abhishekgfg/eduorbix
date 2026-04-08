@@ -178,7 +178,7 @@ export default function Header() {
         {/* Top Bar */}
         <div className="bg-[#0b2a4a] text-white text-xs md:text-sm px-4 md:px-6 py-2 flex justify-between items-center">
           <div className="flex gap-4 items-center">
-            <span className="flex items-center gap-1">📞 +91 XXXXXXXX</span>
+            <span className="flex items-center gap-1">📞 +971 528313726 </span>
           </div>
           <div className="flex gap-3 text-[11px] sm:text-sm">
             <Link to="/partner"><span className="cursor-pointer hover:text-yellow-400 transition">Partner With Us</span></Link>
